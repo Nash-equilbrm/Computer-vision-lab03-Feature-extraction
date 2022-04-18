@@ -15,19 +15,36 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="main.cpp">
+    <Image Include="input1.png">
       <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="utils.cpp">
+    </Image>
+    <Image Include="input2.jpg">
       <Filter>Source Files</Filter>
-    </ClCompile>
+    </Image>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="utils.h">
-      <Filter>Source Files</Filter>
+      <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Header.h">
-      <Filter>Source Files</Filter>
+    <ClInclude Include="harris.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="blob.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="utils.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="harris.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="blob.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

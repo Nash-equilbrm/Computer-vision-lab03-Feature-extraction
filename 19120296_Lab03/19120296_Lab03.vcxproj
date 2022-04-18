@@ -142,12 +142,19 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="main.cpp" />
-    <ClCompile Include="utils.cpp" />
+    <Image Include="input1.png" />
+    <Image Include="input2.jpg" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Header.h" />
+    <ClInclude Include="blob.h" />
+    <ClInclude Include="harris.h" />
     <ClInclude Include="utils.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="blob.cpp" />
+    <ClCompile Include="harris.cpp" />
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="utils.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

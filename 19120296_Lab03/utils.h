@@ -5,39 +5,36 @@
 #define OPENCV_TRAITS_ENABLE_DEPRECATED
 
 #include <iostream>
-#include <cmath>
-#include <vector>
-#include "opencv2/features2d/features2d.hpp"
-#include "opencv2/flann/flann.hpp"
-#include "opencv2/ml/ml.hpp"
-#include "opencv2/imgproc/imgproc.hpp"
 #include "opencv2/highgui/highgui.hpp"
+#include "opencv2/imgproc/imgproc.hpp"
 
 using namespace std;
 using namespace cv;
 
-#define EPS 1e-6
 
 Mat toGrayScale(const Mat& source);
 
-// get and set pixel value
+// get va set gia tri cua pixel trong ma tran
 float getPixel(const Mat& source, int y, int x);
 void setPixel(Mat& source, int y, int x, float value);
 
-// find a max value in matrix
+// tim gia tri lon nhat trong ma tran
 float matrixMaxValue(const Mat& source);
 
-// functions that return kernel filters
+// tao ra cac filter de ap dung phep tinh chap voi anh
 Mat sobelXKernel();
 Mat sobelYKernel();
 Mat gaussianKernel(int gaussianSize = 5, float signma = 1.0, bool divide = true, bool size_with_signma = false);
-Mat createLoG_Kernel(int gaussianSize = 5, float signma = 1.0, bool normalized = false, bool size_with_signma = false);
+Mat LoGKernel(int gaussianSize = 5, float signma = 1.0, bool normalized = false, bool size_with_signma = false);
 
+void printKernel(const Mat& kernel);
 
-// perform matrix multiply
+// phep nhan ma tran
 Mat matrixMultiply(const Mat& mat1, const Mat& mat2);
+// phep tru ma tran
+Mat matrixMinus(const Mat& mat1, const Mat& mat2);
 
 
-Mat mimusElementWise(const Mat& mat1, const Mat& mat2);
+
 
 #endif

@@ -1,43 +1,43 @@
 #include "harris.h"
 
-vector<CornerPoint> HarrisDetector::detectHarris(const Mat& src, float k, float alpha, float d) {
-	// Convert Image to GrayScale
+vector<Corner> HarrisCornerDetector::detectHarris(const Mat& src, float k, float alpha) {
+	// Chuyen doi ve anh grayscale
 	Mat grayImg = toGrayScale(src);
 
-	// Blur the image to reduce noise 
-	Mat blurImg, gaussianKernel5x5 = gaussianKernel();
-	filter2D(grayImg, blurImg, -1, gaussianKernel5x5);
+	// Lam mo anh bang gaussian filter 
+	Mat blurImg, gaussianFilter5x5 = gaussianKernel();
+	filter2D(grayImg, blurImg, -1, gaussianFilter5x5);
 
-	// Find gradient Gx, Gy
+	// Tinh dao ham Gx, Gy
 	Mat gradient_x, gradient_y;
 	Mat sobel_x = sobelXKernel(), sobel_y = sobelYKernel();
 
 	filter2D(blurImg, gradient_x, CV_32FC1, sobel_x);
 	filter2D(blurImg, gradient_y, CV_32FC1, sobel_y);
 
-	// Find (Gx)^2, (Gy)^2, Gx.Gy  
+	// Tinh (Gx)^2, (Gy)^2, Gx.Gy  
 	Mat gradient_x_square = matrixMultiply(gradient_x, gradient_x);
 	Mat gradient_y_square = matrixMultiply(gradient_x, gradient_y);
 	Mat gradient_x_y = matrixMultiply(gradient_y, gradient_y);
 
-	// Perform convolution on those matrix with gaussian filter
+	// Thuc hien tinh chap cac ma tran tren voi gaussian filter
 	filter2D(gradient_x_square, gradient_x_square, CV_32FC1, gaussianKernel(3, 1));
 	filter2D(gradient_y_square, gradient_y_square, CV_32FC1, gaussianKernel(3, 1));
 	filter2D(gradient_x_y, gradient_x_y, CV_32FC1, gaussianKernel(3, 1));
 
-	// Create a matrix 2x2 M like this:
+	// Tao ra mot ma tran hessian nhu sau:
 	//
 	// [Gx^2	GxGy]
 	// [GxGy	Gy^2]
 	//
-	// for every pixel (y, x) = [[gradient_x_square, gradient_x_y], [gradient_x_y, gradient_y_square]]
-	//	Calculate R[y, x] = det(M) - k. (trace(M))^2 and store it to new matrix (image) 
+	// cho tung pixel (y, x) = [[gradient_x_square, gradient_x_y], [gradient_x_y, gradient_y_square]]
+	//	Tinh toan R[y, x] = det(M) - k. (trace(M))^2 va luu ket qua vao ma tran ket qua R 
 	float r_max = INT_MIN;
 	Mat R = Mat::zeros(src.size(), CV_32FC1);
 
 	for (int y = 0; y < R.rows; ++y) {
 		for (int x = 0; x < R.cols; ++x) {
-			// create matrix M 
+			// Tao ra ma tran M 
 			
 			Mat M = Mat::zeros(2, 2, CV_32FC1);
 			setPixel(M, 0, 0, getPixel(gradient_x_square, y, x));
@@ -58,35 +58,36 @@ vector<CornerPoint> HarrisDetector::detectHarris(const Mat& src, float k, float 
 		}
 	}
 
-	// Step 6: 6.1. Compare value of R with threshold which is alpha * r_max (r_max is max pixel value in R), stored those position with
-	//				R value larger than threshold
-	//		   6.2. Use non-maximum suppression algorithm to suppress some consecutive corner-point within Distance range.
 			   
-	//6.1
-	vector<CornerPoint> corner_points;
+	// So sanh gia tri R cua tung pixel voi gia tri nguong Threshold = alpha * r_max (r_max = gia tri Max trong ma tran R), luu lai vi tri nhung
+	// pixel co gia tri R lon hon Threshold
+ 	vector<Corner> corner_points;
 
 	for (int y = 0; y < R.rows; ++y) {
 		for (int x = 0; x < R.cols; ++x) {
 			float r_val = getPixel(R, y, x);
 			if (r_val > alpha * r_max)
-				corner_points.push_back(CornerPoint(r_val, y, x));
+				corner_points.push_back(Corner(r_val, y, x));
 		}
 	}
 	sort(corner_points.begin(), corner_points.end());
 	reverse(corner_points.begin(), corner_points.end());
 
-	//6.2
-	vector<CornerPoint> new_corner_points;
+	// Su dung thuat toan non-maximum suppression de loai bo bot cac diem corner trung lap hoac co vi tri qua gan nhau
+	// Neu ton tai mot tap hop cac corner point co vi tri Manhattan qua gan nhau ( d <= 20) thi chon corner co R lon nhat
 
-	for (CornerPoint p1 : corner_points) {
+	float d = 20;
+	vector<Corner> new_corner_points;
+
+	for (Corner p1 : corner_points) {
 		if (new_corner_points.size() > 0) {
 			bool not_found = true;
-			for (CornerPoint p2 : new_corner_points) {
-				not_found &= (abs(p1.x - p2.x) >= d) || (abs(p1.y - p2.y) >= d);
-				if (!not_found && (p1.r_value > p2.r_value)) {
-					p2.r_value = p1.r_value;
-					p2.x = p1.x;
-					p2.y = p1.y;
+			for (Corner p2 : new_corner_points) {
+				not_found &= (abs(p1._x - p2._x) >= d) || (abs(p1._y - p2._y) >= d);
+				if (!not_found && (p1._r > p2._r)) {
+					p2._r = p1._r;
+					p2._x = p1._x;
+					p2._y = p1._y;
 
 				}
 
@@ -102,12 +103,16 @@ vector<CornerPoint> HarrisDetector::detectHarris(const Mat& src, float k, float 
 
 }
 
-void HarrisDetector::showCorners(const Mat& src, const vector<CornerPoint>& cornerPoints) {
+
+// show ra cac diem corner, radius = 5
+
+void HarrisCornerDetector::showCorners(const Mat& src, float k, float alpha) {
+	vector<Corner> cornerPoints = detectHarris(src, k, alpha);
 	Mat dst = src.clone();
-	for (CornerPoint point : cornerPoints) {
-		circle(dst, Point(point.x, point.y), 4, Scalar(0, 0, 255), 2, 8, 0);
+	for (Corner point : cornerPoints) {
+		circle(dst, Point(point._x, point._y), 5, Scalar(0, 0, 255), 2, 8, 0);
 	}
-	imshow("cornersDetector_Harris", dst);
+	imshow("Harris corner detection", dst);
 	waitKey(0);
 	
 }

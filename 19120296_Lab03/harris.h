@@ -4,22 +4,32 @@
 #define HARRIS_H
 
 #include "utils.h"
+#include <vector>
 
-class CornerPoint {
-public:
-	float r_value;
-	int x, y;
-public:
-	CornerPoint(float r_val, int y_val, int x_val) : r_value(r_val), y(y_val), x(x_val) {};
 
-	bool operator < (const CornerPoint& other) {
-		return r_value < other.r_value;
+class Corner {
+public:
+	int _x, _y;
+	float _r;
+public:
+	Corner(float r, int y, int x) {
+		_r = r;
+		_x = x;
+		_y = y;
 	}
+
+	// overload vi su dung vector de luu tru cac corner 
+	bool operator < (const Corner& other) {
+		return _r < other._r;
+	}
+
+	
 };
-class HarrisDetector {
+class HarrisCornerDetector {
+private:
+	vector<Corner> detectHarris(const Mat& src, float k, float alpha);
 public:
-	vector<CornerPoint> detectHarris(const Mat& source, float k = 0.05, float alpha = 0.01, float d = 30);
-	void showCorners(const Mat& source, const vector<CornerPoint>& cornerPoints);
+	void showCorners(const Mat& src, float k , float alpha );
 };
 
 #endif

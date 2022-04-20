@@ -95,7 +95,7 @@ void BlobDetector::showBlobsWithLoGDetector(const Mat& src, float sigma, float k
 
 
 
-vector<Blob> BlobDetector::detectDOG(const Mat& source, float signma, float k, float thresholdMax) {
+vector<Blob> BlobDetector::detectDOG(const Mat& source, float sigma, float k, float thresholdMax) {
 	// chuyen ve anh gray scale
 	Mat srcGray = toGrayScale(source);
 
@@ -104,7 +104,7 @@ vector<Blob> BlobDetector::detectDOG(const Mat& source, float signma, float k, f
 	vector<Mat> gaussianFilters(number_of_scales, Mat::zeros(source.size(), CV_32FC1));
 
 	for (int i = 0; i < number_of_scales; ++i)
-		gaussianFilters[i] = gaussianKernel(5, pow(k, i) * signma, false, true);
+		gaussianFilters[i] = gaussianKernel(5, pow(k, i) * sigma, true);
 
 	// hieu cua cac anh da lam mo
 	vector<Mat> DoG(number_of_scales - 1, Mat::zeros(source.size(), CV_32FC1));
@@ -164,7 +164,7 @@ vector<Blob> BlobDetector::detectDOG(const Mat& source, float signma, float k, f
 				}
 
 				if (foundPeak == true)
-					blobs.push_back(Blob(pow(k, idx) * signma, y, x));
+					blobs.push_back(Blob(pow(k, idx) * sigma, y, x));
 			}
 		}
 	}

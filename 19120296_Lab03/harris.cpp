@@ -5,8 +5,8 @@ vector<Corner> HarrisCornerDetector::detectHarris(const Mat& src, float k, float
 	Mat grayImg = toGrayScale(src);
 
 	// Lam mo anh bang gaussian filter 
-	Mat blurImg, gaussianFilter5x5 = gaussianKernel();
-	filter2D(grayImg, blurImg, -1, gaussianFilter5x5);
+	Mat blurImg, gaussianFilter = gaussianKernel();
+	filter2D(grayImg, blurImg, -1, gaussianFilter);
 
 	// Tinh dao ham Gx, Gy
 	Mat gradient_x, gradient_y;
@@ -16,14 +16,14 @@ vector<Corner> HarrisCornerDetector::detectHarris(const Mat& src, float k, float
 	filter2D(blurImg, gradient_y, CV_32FC1, sobel_y);
 
 	// Tinh (Gx)^2, (Gy)^2, Gx.Gy  
-	Mat gradient_x_square = matrixMultiply(gradient_x, gradient_x);
-	Mat gradient_y_square = matrixMultiply(gradient_x, gradient_y);
-	Mat gradient_x_y = matrixMultiply(gradient_y, gradient_y);
+	Mat Gx_square = matrixMultiply(gradient_x, gradient_x);
+	Mat Gy_square = matrixMultiply(gradient_x, gradient_y);
+	Mat GxGy = matrixMultiply(gradient_y, gradient_y);
 
 	// Thuc hien tinh chap cac ma tran tren voi gaussian filter
-	filter2D(gradient_x_square, gradient_x_square, CV_32FC1, gaussianKernel(3, 1));
-	filter2D(gradient_y_square, gradient_y_square, CV_32FC1, gaussianKernel(3, 1));
-	filter2D(gradient_x_y, gradient_x_y, CV_32FC1, gaussianKernel(3, 1));
+	filter2D(Gx_square, Gx_square, CV_32FC1, gaussianKernel(3, 1));
+	filter2D(Gy_square, Gy_square, CV_32FC1, gaussianKernel(3, 1));
+	filter2D(GxGy, GxGy, CV_32FC1, gaussianKernel(3, 1));
 
 	// Tao ra mot ma tran hessian nhu sau:
 	//
@@ -32,6 +32,8 @@ vector<Corner> HarrisCornerDetector::detectHarris(const Mat& src, float k, float
 	//
 	// cho tung pixel (y, x) = [[gradient_x_square, gradient_x_y], [gradient_x_y, gradient_y_square]]
 	//	Tinh toan R[y, x] = det(M) - k. (trace(M))^2 va luu ket qua vao ma tran ket qua R 
+
+
 	float r_max = INT_MIN;
 	Mat R = Mat::zeros(src.size(), CV_32FC1);
 
@@ -40,10 +42,10 @@ vector<Corner> HarrisCornerDetector::detectHarris(const Mat& src, float k, float
 			// Tao ra ma tran M 
 			
 			Mat M = Mat::zeros(2, 2, CV_32FC1);
-			setPixel(M, 0, 0, getPixel(gradient_x_square, y, x));
-			setPixel(M, 0, 1, getPixel(gradient_x_y, y, x));
-			setPixel(M, 1, 0, getPixel(gradient_x_y, y, x));
-			setPixel(M, 1, 1, getPixel(gradient_y_square, y, x));
+			setPixel(M, 0, 0, getPixel(Gx_square, y, x));
+			setPixel(M, 0, 1, getPixel(GxGy, y, x));
+			setPixel(M, 1, 0, getPixel(GxGy, y, x));
+			setPixel(M, 1, 1, getPixel(Gy_square, y, x));
 
 			// det(M) = Gx^2 * Gy^2 - GxGy^2
 			float det_M = getPixel(M, 0, 0) * getPixel(M, 1, 1) - getPixel(M, 1, 0) * getPixel(M, 0, 1);

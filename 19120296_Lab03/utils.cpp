@@ -50,9 +50,10 @@ Mat sobelYKernel() {
 }
 
 
-Mat gaussianKernel(int kernelSize, float sigma, bool divide_by_sum, bool size_with_signma) {
+Mat gaussianKernel(int kernelSize, float sigma, bool size_with_signma) {
 	if (size_with_signma != false)
-		kernelSize = (int)2 * ceil(3 * sigma) + 1;
+		// dien tich cua thap chuong gauss
+		kernelSize = 2 * ceil(3 * sigma) + 1;
 
 
 	Mat gaussianKernel = Mat::zeros(kernelSize, kernelSize, CV_32FC1);
@@ -67,11 +68,10 @@ Mat gaussianKernel(int kernelSize, float sigma, bool divide_by_sum, bool size_wi
 			sum += gaussianKernel.at<float>(y + kernelSize / 2, x + kernelSize / 2);
 		}
 	}
-	if (divide_by_sum == true) {
-		for (int i = 0; i < kernelSize; ++i)
-			for (int j = 0; j < kernelSize; ++j)
-				gaussianKernel.at<float>(i, j) = gaussianKernel.at<float>(i, j) * 1.0 / sum;
-	}
+	for (int i = 0; i < kernelSize; ++i)
+		for (int j = 0; j < kernelSize; ++j)
+			gaussianKernel.at<float>(i, j) = gaussianKernel.at<float>(i, j) * 1.0 / sum;
+	
 
 	return gaussianKernel;
 }
@@ -119,7 +119,8 @@ void printKernel(const Mat& kernel)
 
 Mat LoGKernel(int gaussianSize, float signma, bool normalized, bool size_with_signma) {
 	if (size_with_signma != false)
-		gaussianSize = (int)2 * ceil(3 * signma) + 1;
+		// dien tich cua thap chuong gauss
+		gaussianSize = 2 * ceil(3 * signma) + 1;
 
 	Mat LoG_kernel = Mat::zeros(gaussianSize, gaussianSize, CV_32FC1);
 	float sum = 0.0;

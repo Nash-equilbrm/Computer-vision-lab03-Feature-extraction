@@ -17,14 +17,13 @@ public:
 		_x = x;
 		_y = y;
 	}
-
 	// overload vi su dung vector de luu tru cac corner 
 	bool operator < (const Corner& other) {
 		return _r < other._r;
 	}
-
-	
 };
+
+
 class HarrisCornerDetector {
 private:
 	vector<Corner> detectHarris(const Mat& src, float k, float alpha);

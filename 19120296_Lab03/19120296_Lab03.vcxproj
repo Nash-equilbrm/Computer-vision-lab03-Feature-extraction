@@ -142,10 +142,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <Image Include="input1.png" />
-    <Image Include="input2.jpg" />
-  </ItemGroup>
-  <ItemGroup>
     <ClInclude Include="blob.h" />
     <ClInclude Include="harris.h" />
     <ClInclude Include="utils.h" />

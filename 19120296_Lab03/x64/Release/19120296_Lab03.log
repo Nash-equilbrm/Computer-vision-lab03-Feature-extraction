@@ -1,119 +1,12 @@
 ﻿  blob.cpp
-C:\Users\MSI-NK\OneDrive\Máy tính\ComputerVision\Lab03 Feature extraction\19120296_Lab03\19120296_Lab03\blob.cpp(90,66): warning C4244: 'argument': conversion from 'double' to 'int', possible loss of data
+C:\Users\MSI-NK\OneDrive\Máy tính\ComputerVision\Lab03 Feature extraction\19120296_Lab03\19120296_Lab03\blob.cpp(75,39): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+C:\Users\MSI-NK\OneDrive\Máy tính\ComputerVision\Lab03 Feature extraction\19120296_Lab03\19120296_Lab03\blob.cpp(90,50): warning C4244: 'argument': conversion from 'double' to 'int', possible loss of data
 C:\Users\MSI-NK\OneDrive\Máy tính\ComputerVision\Lab03 Feature extraction\19120296_Lab03\19120296_Lab03\blob.cpp(107,52): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
-C:\Users\MSI-NK\OneDrive\Máy tính\ComputerVision\Lab03 Feature extraction\19120296_Lab03\19120296_Lab03\blob.cpp(171,66): warning C4244: 'argument': conversion from 'double' to 'int', possible loss of data
-C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.29.30133\include\tuple(170,47): warning C4244: 'initializing': conversion from '_Ty' to '_Ty', possible loss of data
-          with
-          [
-              _Ty=double
-          ]
-          and
-          [
-              _Ty=float
-          ]
-C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.29.30133\include\tuple(258): message : see reference to function template instantiation 'std::_Tuple_val<_This>::_Tuple_val<_Ty>(_Other &&)' being compiled
-          with
-          [
-              _This=float,
-              _Ty=double,
-              _Other=double
-          ]
-C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.29.30133\include\tuple(258): message : see reference to function template instantiation 'std::_Tuple_val<_This>::_Tuple_val<_Ty>(_Other &&)' being compiled
-          with
-          [
-              _This=float,
-              _Ty=double,
-              _Other=double
-          ]
-C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.29.30133\include\tuple(258): message : see reference to function template instantiation 'std::tuple<float>::tuple<std::_Exact_args_t,_Ty,,0>(_Tag,_This2 &&)' being compiled
-          with
-          [
-              _Ty=double,
-              _Tag=std::_Exact_args_t,
-              _This2=double
-          ]
-C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.29.30133\include\tuple(258): message : see reference to function template instantiation 'std::tuple<float>::tuple<std::_Exact_args_t,_Ty,,0>(_Tag,_This2 &&)' being compiled
-          with
-          [
-              _Ty=double,
-              _Tag=std::_Exact_args_t,
-              _This2=double
-          ]
-C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.29.30133\include\tuple(258): message : see reference to function template instantiation 'std::tuple<int,float>::tuple<std::_Exact_args_t,_Ty,double,0>(_Tag,_This2 &&,double &&)' being compiled
-          with
-          [
-              _Ty=int,
-              _Tag=std::_Exact_args_t,
-              _This2=int
-          ]
-C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.29.30133\include\tuple(258): message : see reference to function template instantiation 'std::tuple<int,float>::tuple<std::_Exact_args_t,_Ty,double,0>(_Tag,_This2 &&,double &&)' being compiled
-          with
-          [
-              _Ty=int,
-              _Tag=std::_Exact_args_t,
-              _This2=int
-          ]
-C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.29.30133\include\tuple(878): message : see reference to function template instantiation 'std::tuple<int,int,float>::tuple<std::_Exact_args_t,int,int,double,0>(_Tag,_This2 &&,int &&,double &&)' being compiled
-          with
-          [
-              _Tag=std::_Exact_args_t,
-              _This2=int
-          ]
-C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.29.30133\include\tuple(878): message : see reference to function template instantiation 'std::tuple<int,int,float>::tuple<std::_Exact_args_t,int,int,double,0>(_Tag,_This2 &&,int &&,double &&)' being compiled
-          with
-          [
-              _Tag=std::_Exact_args_t,
-              _This2=int
-          ]
-C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.29.30133\include\tuple(265): message : see reference to function template instantiation 'std::tuple<int,int,float>::tuple<std::_Unpack_tuple_t,_Ty,0,1,2,0>(_Tag,_Tpl &&,std::integer_sequence<size_t,0,1,2>)' being compiled
-          with
-          [
-              _Ty=std::tuple<int,int,double>,
-              _Tag=std::_Unpack_tuple_t,
-              _Tpl=std::tuple<int,int,double>
-          ]
-C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.29.30133\include\tuple(265): message : see reference to function template instantiation 'std::tuple<int,int,float>::tuple<std::_Unpack_tuple_t,_Ty,0,1,2,0>(_Tag,_Tpl &&,std::integer_sequence<size_t,0,1,2>)' being compiled
-          with
-          [
-              _Ty=std::tuple<int,int,double>,
-              _Tag=std::_Unpack_tuple_t,
-              _Tpl=std::tuple<int,int,double>
-          ]
-C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.29.30133\include\tuple(392): message : see reference to function template instantiation 'std::tuple<int,int,float>::tuple<std::_Unpack_tuple_t,std::tuple<int,int,double>,0>(_Tag,_Tpl &&)' being compiled
-          with
-          [
-              _Tag=std::_Unpack_tuple_t,
-              _Tpl=std::tuple<int,int,double>
-          ]
-C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.29.30133\include\tuple(392): message : see reference to function template instantiation 'std::tuple<int,int,float>::tuple<std::_Unpack_tuple_t,std::tuple<int,int,double>,0>(_Tag,_Tpl &&)' being compiled
-          with
-          [
-              _Tag=std::_Unpack_tuple_t,
-              _Tpl=std::tuple<int,int,double>
-          ]
-C:\Users\MSI-NK\OneDrive\Máy tính\ComputerVision\Lab03 Feature extraction\19120296_Lab03\19120296_Lab03\blob.cpp(75): message : see reference to function template instantiation 'std::tuple<int,int,float>::tuple<int,int,double,0>(std::tuple<int,int,double> &&) noexcept' being compiled
-C:\Users\MSI-NK\OneDrive\Máy tính\ComputerVision\Lab03 Feature extraction\19120296_Lab03\19120296_Lab03\blob.cpp(75): message : see reference to function template instantiation 'std::tuple<int,int,float>::tuple<int,int,double,0>(std::tuple<int,int,double> &&) noexcept' being compiled
-  harris.cpp
-  main.cpp
-C:\Users\MSI-NK\OneDrive\Máy tính\ComputerVision\Lab03 Feature extraction\19120296_Lab03\19120296_Lab03\main.cpp(45,17): warning C4305: 'initializing': truncation from 'double' to 'float'
-C:\Users\MSI-NK\OneDrive\Máy tính\ComputerVision\Lab03 Feature extraction\19120296_Lab03\19120296_Lab03\main.cpp(45,31): warning C4305: 'initializing': truncation from 'double' to 'float'
-C:\Users\MSI-NK\OneDrive\Máy tính\ComputerVision\Lab03 Feature extraction\19120296_Lab03\19120296_Lab03\main.cpp(60,11): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-  utils.cpp
-C:\Users\MSI-NK\OneDrive\Máy tính\ComputerVision\Lab03 Feature extraction\19120296_Lab03\19120296_Lab03\utils.cpp(55,41): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
-C:\Users\MSI-NK\OneDrive\Máy tính\ComputerVision\Lab03 Feature extraction\19120296_Lab03\19120296_Lab03\utils.cpp(61,14): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-C:\Users\MSI-NK\OneDrive\Máy tính\ComputerVision\Lab03 Feature extraction\19120296_Lab03\19120296_Lab03\utils.cpp(65,12): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-C:\Users\MSI-NK\OneDrive\Máy tính\ComputerVision\Lab03 Feature extraction\19120296_Lab03\19120296_Lab03\utils.cpp(73,75): warning C4244: '=': conversion from 'double' to '_Tp', possible loss of data
-          with
-          [
-              _Tp=float
-          ]
-C:\Users\MSI-NK\OneDrive\Máy tính\ComputerVision\Lab03 Feature extraction\19120296_Lab03\19120296_Lab03\utils.cpp(122,44): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
-C:\Users\MSI-NK\OneDrive\Máy tính\ComputerVision\Lab03 Feature extraction\19120296_Lab03\19120296_Lab03\utils.cpp(127,11): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-C:\Users\MSI-NK\OneDrive\Máy tính\ComputerVision\Lab03 Feature extraction\19120296_Lab03\19120296_Lab03\utils.cpp(132,12): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-C:\Users\MSI-NK\OneDrive\Máy tính\ComputerVision\Lab03 Feature extraction\19120296_Lab03\19120296_Lab03\utils.cpp(133,14): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+C:\Users\MSI-NK\OneDrive\Máy tính\ComputerVision\Lab03 Feature extraction\19120296_Lab03\19120296_Lab03\blob.cpp(167,39): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+C:\Users\MSI-NK\OneDrive\Máy tính\ComputerVision\Lab03 Feature extraction\19120296_Lab03\19120296_Lab03\blob.cpp(180,50): warning C4244: 'argument': conversion from 'double' to 'int', possible loss of data
   Generating code
-  0 of 530 functions ( 0.0%) were compiled, the rest were copied from previous compilation.
+  3 of 439 functions ( 0.7%) were compiled, the rest were copied from previous compilation.
     0 functions were new in current compilation
-    0 functions had inline decision re-evaluated but remain unchanged
+    3 functions had inline decision re-evaluated but remain unchanged
   Finished generating code
   19120296_Lab03.vcxproj -> C:\Users\MSI-NK\OneDrive\Máy tính\ComputerVision\Lab03 Feature extraction\19120296_Lab03\x64\Release\19120296_Lab03.exe

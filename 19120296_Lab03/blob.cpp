@@ -1,6 +1,6 @@
 #include "blob.h"
 
-set<tuple<int, int, float>> BlobDetector::detectBlob(const Mat& src, float sigma, float k, float threshold) {
+vector<Blob> BlobDetector::detectBlob(const Mat& src, float sigma, float k, float threshold) {
 	// chuyen ve anh xam
 	Mat srcGray = toGrayScale(src);
 
@@ -34,7 +34,7 @@ set<tuple<int, int, float>> BlobDetector::detectBlob(const Mat& src, float sigma
 	
 	// Ngoai tru neu pixel dang xet nam o ma tran cua LoG tinh bang sigma dau tien hoac cuoi cung cua scale-space thi chi so sanh voi 17 diem khac.
 	// (Vi ma tran voi scale lan can no chi co 1)
-	set<tuple<int, int, float>> blob_points;
+	vector<Blob> blobs;
 	for (int idx = 0; idx < LoGs.size(); ++idx) {
 		for (int y = 0; y < src.rows; ++y) {
 			for (int x = 0; x < src.cols; ++x) {
@@ -42,19 +42,19 @@ set<tuple<int, int, float>> BlobDetector::detectBlob(const Mat& src, float sigma
 				if (val <= threshold * max_log[idx]) 
 					continue;
 
-				bool found_peak = true;
+				bool foundPeak = true;
 
 				// step_idx xac dinh matrix ket qua LoG voi scale lan can
 				for (int step_idx = -1; step_idx <= 1; ++step_idx) {
-					if (found_peak == false)
+					if (foundPeak == false)
 						break;
 					// step_x va step_y xac dinh cac Pixel lan can
 					for (int step_x = -1; step_x <= 1; ++step_x) {
-						if (found_peak == false)
+						if (foundPeak == false)
 							break;
 
 						for (int step_y = -1; step_y <= 1; ++step_y) {
-							if (found_peak == false) 
+							if (foundPeak == false) 
 								break;
 
 							int cur_idx = idx + step_idx, cur_y = y + step_y, cur_x = x + step_x;
@@ -66,28 +66,28 @@ set<tuple<int, int, float>> BlobDetector::detectBlob(const Mat& src, float sigma
 								continue;
 
 							if (val < getPixel(LoGs[cur_idx], cur_y, cur_x))
-								found_peak = false;
+								foundPeak = false;
 						}
 					}
 				}
 
-				if (found_peak == true)
-					blob_points.insert(make_tuple(y, x, pow(k, idx) * sigma));
+				if (foundPeak == true)
+					blobs.push_back(Blob(pow(k, idx) * sigma, y, x));
 			}
 		}
 	}
 
 
-	return blob_points;
+	return blobs;
 }
 
 void BlobDetector::showBlobsWithLoGDetector(const Mat& src, float sigma, float k, float threshold) {
-	set<tuple<int, int, float>> blob_points = detectBlob(src, sigma, k, threshold);
+	vector<Blob> blobs = detectBlob(src, sigma, k, threshold);
 	
 	// Moi blob co ban kinh r = sigma*sqrt(2), voi sigma luu trong gia tri thu 3 cua tuple
 	Mat dst = src.clone();
-	for (tuple<int, int, float> point : blob_points)
-		circle(dst, Point(get<1>(point), get<0>(point)), get<2>(point) * sqrt(2), Scalar(0, 0, 255), 2, 8, 0);
+	for (Blob blob : blobs)
+		circle(dst, Point(blob._x, blob._y), blob._val * sqrt(2), Scalar(0, 0, 255), 2, 8, 0);
 
 	imshow("Laplace of Gaussian Blob Detection", dst);
 	waitKey(0);
@@ -95,7 +95,7 @@ void BlobDetector::showBlobsWithLoGDetector(const Mat& src, float sigma, float k
 
 
 
-set<tuple<int, int, float>> BlobDetector::detectDOG(const Mat& source, float signma, float k, float thresholdMax) {
+vector<Blob> BlobDetector::detectDOG(const Mat& source, float signma, float k, float thresholdMax) {
 	// chuyen ve anh gray scale
 	Mat srcGray = toGrayScale(source);
 
@@ -106,69 +106,78 @@ set<tuple<int, int, float>> BlobDetector::detectDOG(const Mat& source, float sig
 	for (int i = 0; i < number_of_scales; ++i)
 		gaussianFilters[i] = gaussianKernel(5, pow(k, i) * signma, false, true);
 
-	
-	vector<Mat> DoG_conv(number_of_scales - 1, Mat::zeros(source.size(), CV_32FC1));
+	// hieu cua cac anh da lam mo
+	vector<Mat> DoG(number_of_scales - 1, Mat::zeros(source.size(), CV_32FC1));
+
+
 	vector<float> max_DoG_value(number_of_scales, 0);
 
-	for (int i = 0; i < DoG_conv.size(); ++i) {
-		Mat conv_i, conv_i_next;
+	for (int i = 0; i < DoG.size(); ++i) {
+		Mat conv1, conv2;
 
-		filter2D(srcGray, conv_i, CV_32FC1, gaussianFilters[i]);
-		filter2D(srcGray, conv_i_next, CV_32FC1, gaussianFilters[i + 1]);
+		filter2D(srcGray, conv1, CV_32FC1, gaussianFilters[i]);
+		filter2D(srcGray, conv2, CV_32FC1, gaussianFilters[i + 1]);
 
 		// thuc hien phep tru ma tran cho 2 anh da lam mo bang 2 gaussian filter voi sigma khac nhau
-		Mat conv_result = matrixMinus(conv_i_next, conv_i);
+		Mat conv_result = matrixMinus(conv2, conv1);
 
 		conv_result = matrixMultiply(conv_result, conv_result);
 
 		max_DoG_value[i] = matrixMaxValue(conv_result);
-		DoG_conv[i] = conv_result;
+		DoG[i] = conv_result;
 	}
 
 	// tim local extrema tuong tu nhu thuat toan Laplace Blob detection
-	set<tuple<int, int, float>> blob_points;
-	for (int idx = 0; idx < DoG_conv.size(); ++idx) {
+	vector<Blob> blobs;
+	for (int idx = 0; idx < DoG.size(); ++idx) {
 		for (int y = 0; y < source.rows; ++y) {
 			for (int x = 0; x < source.cols; ++x) {
-				float val = getPixel(DoG_conv[idx], y, x);
-				if (val <= thresholdMax * max_DoG_value[idx]) continue;
+				float val = getPixel(DoG[idx], y, x);
+				if (val <= thresholdMax * max_DoG_value[idx])
+					continue;
 
-				bool found_peak = true;
+				bool foundPeak = true;
 				for (int step_idx = -1; step_idx <= 1; ++step_idx) {
-					if (found_peak == false) break;
+					if (foundPeak == false) 
+						break;
 
 					for (int step_x = -1; step_x <= 1; ++step_x) {
-						if (found_peak == false) break;
+						if (foundPeak == false)
+							break;
 
 						for (int step_y = -1; step_y <= 1; ++step_y) {
-							if (found_peak == false) break;
+							if (foundPeak == false)
+								break;
 
 							int cur_idx = idx + step_idx, cur_y = y + step_y, cur_x = x + step_x;
-							if (cur_idx >= DoG_conv.size() || cur_idx < 0) continue;
-							if (cur_y >= source.rows || cur_y < 0) continue;
-							if (cur_x >= source.cols || cur_x < 0) continue;
+							if (cur_idx >= DoG.size() || cur_idx < 0)
+								continue;
+							if (cur_y >= source.rows || cur_y < 0)
+								continue;
+							if (cur_x >= source.cols || cur_x < 0)
+								continue;
 
-							if (val < getPixel(DoG_conv[cur_idx], cur_y, cur_x))
-								found_peak = false;
+							if (val < getPixel(DoG[cur_idx], cur_y, cur_x))
+								foundPeak = false;
 						}
 					}
 				}
 
-				if (found_peak == true)
-					blob_points.insert(make_tuple(y, x, pow(k, idx) * signma));
+				if (foundPeak == true)
+					blobs.push_back(Blob(pow(k, idx) * signma, y, x));
 			}
 		}
 	}
 
 
-	return blob_points;
+	return blobs;
 }
 void BlobDetector::showBlobsWithDoGDetector(const Mat& src, float sigma, float k, float threshold) {
-	set<tuple<int, int, float>> blobPoints = detectDOG(src, sigma, k, threshold);
+	vector<Blob> blobs = detectDOG(src, sigma, k, threshold);
 
 	Mat dst = src.clone();
-	for (tuple<int, int, float> point : blobPoints)
-		circle(dst, Point(get<1>(point), get<0>(point)), get<2>(point) * sqrt(2), Scalar(0, 0, 255), 2, 8, 0);
+	for (Blob blob : blobs)
+		circle(dst, Point(blob._x, blob._y), blob._val * sqrt(2), Scalar(0, 0, 255), 2, 8, 0);
 	
 	
 	imshow("Difference of Gaussian Blob Detection", dst);

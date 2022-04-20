@@ -6,12 +6,25 @@
 #include "Utils.h"
 #include <set>
 
+class Blob {
+public:
+	int _x, _y;
+	float _val;
+public:
+	Blob(float val, int y, int x) {
+		_x = x;
+		_y = y;
+		_val = val;
+	}
+};
+
+
 class BlobDetector {
 	// implement ca 2 thuat toan LoG va DoG
 
 private:
-	set<tuple<int, int, float>> detectBlob(const Mat& src, float signma, float k, float threshold);
-	set<tuple<int, int, float>> detectDOG(const Mat& src, float signma , float k , float threshold );
+	vector<Blob> detectBlob(const Mat& src, float signma, float k, float threshold);
+	vector<Blob> detectDOG(const Mat& src, float signma , float k , float threshold );
 
 public:
 	void showBlobsWithLoGDetector(const Mat& src, float signma, float k, float threshold);

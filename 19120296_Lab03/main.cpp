@@ -39,39 +39,51 @@ void execute(int argc, const vector<string>& argv) {
 		return;
 	}
 
-	if (argv[2] == "1") {// thuat toan Harris corner detection
+	else if (argv[2] == "1") {// thuat toan Harris corner detection
 		imshow("Source image", src);
 		waitKey(0);
 		float k = 0.05, alpha = 0.01;	// tham so mac dinh nhu trong slide bai giang
+
+		// neu nguoi dung co nhap tham so
 		if (argv.size() >= 4)
 			k = stof(argv[3]);
 		if (argv.size() >= 5)
 			alpha = stof(argv[4]);
+
+
 		HarrisCornerDetector harrisCornerDetector;
 		harrisCornerDetector.showCorners(src, k, alpha);
 		return;
 	}
 
 
-	if (argv[2] == "3" || argv[2] == "4") { // thuat toan  Laplace blob detection
+	else if (argv[2] == "3" || argv[2] == "4") { // thuat toan  Laplace blob detection
 		imshow("Source image", src);
 		waitKey(0);
 		BlobDetector blobDetector;
 		float k = sqrt(2), sigma = 1.0f, threshold = 0.3f; // tham so mac dinh nhu trong slide bai giang
+
+		// neu nguoi dung co nhap tham so
 		if (argv.size() >= 4)
 			threshold = stof(argv[3]);
 		if (argv.size() >= 5)
 			sigma = stof(argv[4]);
 		if (argv.size() >= 6)
 			k = stof(argv[5]);
+
+		// LOG
 		if (argv[2] == "3") {
 			blobDetector.showBlobsWithLoGDetector(src, sigma, k, threshold);
 			return;
 		}
+		//DOG
 		else {
 			blobDetector.showBlobsWithDoGDetector(src, sigma, k, threshold);
 			return;
 		}
+	}
+	else {
+		printHelp();
 	}
 
 }

@@ -5,25 +5,25 @@ vector<Corner> HarrisCornerDetector::detectHarris(const Mat& src, float k, float
 	Mat grayImg = toGrayScale(src);
 
 	// Lam mo anh bang gaussian filter 
-	Mat blurImg, gaussianFilter = gaussianKernel();
+	Mat blurImg, gaussianFilter = gaussianKernel(5);
 	filter2D(grayImg, blurImg, -1, gaussianFilter);
 
 	// Tinh dao ham Gx, Gy
-	Mat gradient_x, gradient_y;
 	Mat sobel_x = sobelXKernel(), sobel_y = sobelYKernel();
+	Mat Gx, Gy;
 
-	filter2D(blurImg, gradient_x, CV_32FC1, sobel_x);
-	filter2D(blurImg, gradient_y, CV_32FC1, sobel_y);
+	filter2D(blurImg, Gx, CV_32FC1, sobel_x);
+	filter2D(blurImg, Gy, CV_32FC1, sobel_y);
 
 	// Tinh (Gx)^2, (Gy)^2, Gx.Gy  
-	Mat Gx_square = matrixMultiply(gradient_x, gradient_x);
-	Mat Gy_square = matrixMultiply(gradient_x, gradient_y);
-	Mat GxGy = matrixMultiply(gradient_y, gradient_y);
+	Mat Gx_square = matrixMultiply(Gx, Gx);
+	Mat Gy_square = matrixMultiply(Gy, Gy);
+	Mat GxGy = matrixMultiply(Gx, Gy);
 
 	// Thuc hien tinh chap cac ma tran tren voi gaussian filter
-	filter2D(Gx_square, Gx_square, CV_32FC1, gaussianKernel(3, 1));
-	filter2D(Gy_square, Gy_square, CV_32FC1, gaussianKernel(3, 1));
-	filter2D(GxGy, GxGy, CV_32FC1, gaussianKernel(3, 1));
+	filter2D(Gx_square, Gx_square, CV_32FC1, gaussianKernel(3));
+	filter2D(Gy_square, Gy_square, CV_32FC1, gaussianKernel(3));
+	filter2D(GxGy, GxGy, CV_32FC1, gaussianKernel(3));
 
 	// Tao ra mot ma tran hessian nhu sau:
 	//
@@ -39,8 +39,8 @@ vector<Corner> HarrisCornerDetector::detectHarris(const Mat& src, float k, float
 
 	for (int y = 0; y < R.rows; ++y) {
 		for (int x = 0; x < R.cols; ++x) {
+
 			// Tao ra ma tran M 
-			
 			Mat M = Mat::zeros(2, 2, CV_32FC1);
 			setPixel(M, 0, 0, getPixel(Gx_square, y, x));
 			setPixel(M, 0, 1, getPixel(GxGy, y, x));
@@ -63,45 +63,44 @@ vector<Corner> HarrisCornerDetector::detectHarris(const Mat& src, float k, float
 			   
 	// So sanh gia tri R cua tung pixel voi gia tri nguong Threshold = alpha * r_max (r_max = gia tri Max trong ma tran R), luu lai vi tri nhung
 	// pixel co gia tri R lon hon Threshold
- 	vector<Corner> corner_points;
+ 	vector<Corner> corners;
 
 	for (int y = 0; y < R.rows; ++y) {
 		for (int x = 0; x < R.cols; ++x) {
 			float r_val = getPixel(R, y, x);
-			if (r_val > alpha * r_max)
-				corner_points.push_back(Corner(r_val, y, x));
+			if (r_val >= alpha * r_max)
+				corners.push_back(Corner(r_val, y, x));
 		}
 	}
-	sort(corner_points.begin(), corner_points.end());
-	reverse(corner_points.begin(), corner_points.end());
+	/*sort(corners.begin(), corners.end());
+	reverse(corners.begin(), corners.end());*/
 
 	// Su dung thuat toan non-maximum suppression de loai bo bot cac diem corner trung lap hoac co vi tri qua gan nhau
 	// Neu ton tai mot tap hop cac corner point co vi tri Manhattan qua gan nhau ( d <= 20) thi chon corner co R lon nhat
 
-	float d = 20;
-	vector<Corner> new_corner_points;
+	float d = 10;
+	vector<Corner> new_corners;
 
-	for (Corner p1 : corner_points) {
-		if (new_corner_points.size() > 0) {
+	for (Corner p1 : corners) {
+		if (new_corners.size() > 0) {
 			bool not_found = true;
-			for (Corner p2 : new_corner_points) {
+			for (Corner p2 : new_corners) {
 				not_found &= (abs(p1._x - p2._x) >= d) || (abs(p1._y - p2._y) >= d);
-				if (!not_found && (p1._r > p2._r)) {
+				if (!not_found && p1._r > p2._r) {
 					p2._r = p1._r;
 					p2._x = p1._x;
 					p2._y = p1._y;
-
 				}
 
 			}
 				
 			if (not_found)
-				new_corner_points.push_back(p1);
+				new_corners.push_back(p1);
 		}
 		else
-			new_corner_points.push_back(p1);
+			new_corners.push_back(p1);
 	}
-	return new_corner_points;
+	return new_corners;
 
 }
 
@@ -112,7 +111,7 @@ void HarrisCornerDetector::showCorners(const Mat& src, float k, float alpha) {
 	vector<Corner> cornerPoints = detectHarris(src, k, alpha);
 	Mat dst = src.clone();
 	for (Corner point : cornerPoints) {
-		circle(dst, Point(point._x, point._y), 5, Scalar(0, 0, 255), 2, 8, 0);
+		circle(dst, Point(point._x, point._y), 5, Scalar(0, 0, 255), 2);
 	}
 	imshow("Harris corner detection", dst);
 	waitKey(0);

@@ -10,14 +10,17 @@ vector<Blob> BlobDetector::detectBlob(const Mat& src, float sigma, float k, floa
 
 	int number_of_scales = 10;
 	vector<Mat> LoGs(number_of_scales, Mat::zeros(src.size(), CV_32FC1));
-	float signma_y = sigma;
+	float sigma_change = sigma;
 
 	vector<float> max_log(number_of_scales, 0);
 
 	for (int idx = 0; idx < LoGs.size(); ++idx) {
-		signma_y = (idx == 0) ? signma_y : (signma_y * k);
+		if (idx != 0) {
+			sigma_change = sigma_change * k;
+		}
+		
 
-		Mat log_filter = LoGKernel(5, signma_y, true, true);
+		Mat log_filter = LoGKernel(5, sigma_change, true, true);
 		Mat conv;
 
 		filter2D(srcGray, conv, CV_32FC1, log_filter);

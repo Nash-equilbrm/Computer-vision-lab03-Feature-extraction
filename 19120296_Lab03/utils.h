@@ -24,7 +24,7 @@ float matrixMaxValue(const Mat& src);
 // tao ra cac filter de ap dung phep tinh chap voi anh
 Mat sobelXKernel();
 Mat sobelYKernel();
-Mat gaussianKernel(int kernelSize = 5, float signma = 1.0, bool calculate_size_with_sigma = false);
+Mat gaussianKernel(int kernelSize, float signma = 1.0, bool calculate_size_with_sigma = false);
 Mat LoGKernel(int gaussianSize = 5, float signma = 1.0, bool normalize = false, bool calculate_size_with_sigma = false);
 
 void printKernel(const Mat& kernel);
